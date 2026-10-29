@@ -60,6 +60,7 @@ def run_eval(args, mode: str):
         "--device",
         args.device,
     ]
+    eval_command.extend(["--musicgen_model", args.musicgen_model, "--encodec_model", args.encodec_model])
     if args.encodec_weight:
         eval_command.extend(["--encodec_weight", args.encodec_weight])
     if clustered:
@@ -85,6 +86,8 @@ def main():
         default="both",
         help="Run the KGW base watermark, the clustered WMAR method, or both for comparison.",
     )
+    parser.add_argument("--musicgen_model", default="facebook/musicgen-medium", help="Hugging Face ID or local MusicGen checkpoint directory.")
+    parser.add_argument("--encodec_model", default="facebook/encodec_32khz", help="Hugging Face ID or local EnCodec checkpoint directory.")
     parser.add_argument("--encodec_weight", default=None)
     parser.add_argument("--python-bin", default=None, help="Python interpreter to use for the actual evaluation run.")
     args = parser.parse_args()

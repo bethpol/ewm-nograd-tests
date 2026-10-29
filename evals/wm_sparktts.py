@@ -191,8 +191,10 @@ def load_configs_select(args):
 # ======================
 
 class SparkTTSTokenizerWrapper:
-    def __init__(self, model_dir: str, device: torch.device):
-        self.tok = BiCodecTokenizer(model_dir=model_dir, device=device)
+    def __init__(self, model_dir: str, device: torch.device, audio_tokenizer=None):
+        # A caller that already loaded SparkTTS can share its codec.
+        self.tok = (audio_tokenizer if audio_tokenizer is not None
+                    else BiCodecTokenizer(model_dir=model_dir, device=device))
         self.sr = int(self.tok.config.get("sample_rate", 16000))
         self.device = device
 

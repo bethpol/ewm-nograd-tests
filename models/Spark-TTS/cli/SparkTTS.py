@@ -295,6 +295,7 @@ class SparkTTS:
         wm_seed: int = 0,
         clustering_map: torch.Tensor = None,
         return_semantic_ids: bool = False,
+        keyed_sampler: LogitsProcessor = None,
     ) -> torch.Tensor:
         """
         Performs inference to generate speech from text, incorporating prompt audio and/or text.
@@ -318,6 +319,7 @@ class SparkTTS:
             wm_seed (int, optional): Watermark seed.
             clustering_map (torch.Tensor, optional): Token->cluster map for clustered watermarking.
             return_semantic_ids (bool, optional): If True, also return generated semantic token IDs.
+            keyed_sampler (LogitsProcessor, optional): Keyed categorical sampler; applies its own sampling filters.
 
         Returns:
             torch.Tensor: Generated waveform as a tensor.
@@ -346,6 +348,14 @@ class SparkTTS:
                     )
                 ]
             )
+
+        # A keyed sampler performs its own temperature/top-k/top-p filtering.
+        # Disable HF's later warpers to avoid applying those settings twice.
+        if keyed_sampler is not None:
+            if wm_enable or gender is not None:
+                raise ValueError("Keyed sampling requires reference-conditioned TTS without a logit-bias watermark")
+            logits_processor = LogitsProcessorList([keyed_sampler])
+            temperature, top_k, top_p = 1.0, 0, 1.0
 
         # Generate speech using the model
         generated_ids = self.model.generate(
@@ -381,6 +391,9 @@ class SparkTTS:
                 .unsqueeze(0)
                 .unsqueeze(0)
             )
+
+        if pred_semantic_ids.numel() == 0:
+            raise RuntimeError("Spark-TTS generated no semantic tokens")
 
         # Convert semantic tokens back to waveform
         wav = self.audio_tokenizer.detokenize(

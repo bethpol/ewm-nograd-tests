@@ -54,9 +54,9 @@ def run_watermark_eval(args, clustering_maps=None, config_name="base"):
     # 1. Load Models (Swapped for MusicGen)
     device = args.device
     print(f"Loading MusicGen models on {device}...")
-    processor = AutoProcessor.from_pretrained("facebook/musicgen-medium")
-    model = MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-medium").to(device)
-    encodec = EncodecModel.from_pretrained("facebook/encodec_32khz").to(device)
+    processor = AutoProcessor.from_pretrained(args.musicgen_model)
+    model = MusicgenForConditionalGeneration.from_pretrained(args.musicgen_model).to(device)
+    encodec = EncodecModel.from_pretrained(args.encodec_model).to(device)
 
     # 2. Apply Weight Translation (from musicgen.py)
     if args.encodec_weight:
@@ -273,6 +273,8 @@ def main():
         default="models/encodec_configs.json",
         help="Optional JSON file selecting one clustering per EnCodec codebook.",
     )
+    parser.add_argument("--musicgen_model", default="facebook/musicgen-medium", help="Hugging Face ID or local MusicGen checkpoint directory.")
+    parser.add_argument("--encodec_model", default="facebook/encodec_32khz", help="Hugging Face ID or local EnCodec checkpoint directory.")
     parser.add_argument("--encodec_weight", type=str, default=None)
     parser.add_argument("--save_audio", type=int, default=10)
     parser.add_argument("--eval_aug", type=bool_inst, default=True)         

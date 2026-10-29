@@ -24,6 +24,18 @@ conda activate wmar_audio
 bash install.sh
 ```
 
+For an isolated environment in WSL/Linux without activating Conda:
+
+```bash
+conda run -n wmar_audio python -m venv .venv
+source .venv/bin/activate
+bash install.sh
+```
+
+Use the same activated environment for downloads and demos. Shell scripts must
+have LF line endings; `.gitattributes` enforces this for future checkouts.
+The installer stops immediately if a dependency fails to install.
+
 ### Download checkpoints
 
 Download the public checkpoints into `checkpoints/` (defaults) or a custom directory:
@@ -141,6 +153,21 @@ Quick demo:
 python scripts/demo_musicgen.py --nsamples 3 --steps 300 --mode both
 ```
 
+To use the checkpoints downloaded by the helper for a short smoke test:
+
+```bash
+conda activate wmar_audio
+python scripts/demo_musicgen.py --device cuda --nsamples 1 --steps 32 --mode both \
+    --musicgen_model checkpoints/musicgen-medium \
+    --encodec_model checkpoints/encodec_32khz
+```
+
+Use `--device cpu` if no GPU is available; CPU generation is slower. GPU runs
+require `nvidia-smi` to work in WSL and
+`python -c "import torch; print(torch.cuda.is_available())"` to print `True`.
+Install the system `ffmpeg` executable to use compressed-audio augmentations;
+the short demo disables augmentations.
+
 If `--prompt_file` is omitted, the demo first uses `data/music_prompts.txt` from this repository. If that file is missing, it creates a tiny text prompt file for a smoke test. Set `--mode base` to run only KGW, `--mode clustered` to run only WMAR, or `--mode both` to compare them back to back.
 
 ## TTS extensions
@@ -208,6 +235,28 @@ python scripts/demo_sparktts.py --nsamples 3 --mode both
 These two smoke tests expect local checkpoint directories under `checkpoints/cosyvoice/` and `checkpoints/sparktts/`. If those are missing, the demo scripts exit immediately with a short message pointing back to `scripts/download_models.py`. Both demos run directly after the single `bash install.sh` setup above. The Spark-TTS demo also creates a tiny prompt waveform and prompt text automatically when they are omitted. Set `--mode base` to run only KGW, `--mode clustered` to run only WMAR, or `--mode both` to compare them back to back.
 
 All four demo scripts print per-sample watermark detection statistics at the end of the run.
+
+## Keyed categorical watermark experiment
+
+For the delta=0 Spark-TTS experiment using ordinary keyed semantic sampling and
+match-count detection, see [the code walkthrough](docs/keyed_sparktts.md).
+Run it with `python -m evals.keyed_sparktts generate --help`. This experiment
+uses saved generation distributions for replay and reports matches rather than
+the existing greenlist p-values.
+
+To collect and visualize the Spark-TTS retokenization channel across many
+ordinary generations, see [the transition-matrix experiment](docs/sparktts_transition.md).
+It saves observed-count dot plots and a smoothed detector-ready transition matrix.
+
+The first bounded attack/recovery benchmark is documented in
+[the Spark-TTS recovery guide](docs/sparktts_recovery.md). It reuses saved audio
+and the repository's transforms, reports token/group recovery, and separates
+timing-changing attacks from nominally time-preserving transforms.
+
+For the rolling speech-to-text word-anchor feasibility pilot, see
+[the STT experiment guide](docs/rolling_stt_pilot.md). It compares causal
+prefix-decoded generation audio with clean and degraded detection prefixes,
+without choosing a hash protocol or modifying watermark sampling.
 
 ## Attacks
 
