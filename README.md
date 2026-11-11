@@ -238,6 +238,10 @@ All four demo scripts print per-sample watermark detection statistics at the end
 
 ## Keyed categorical watermark experiment
 
+For random-group sampling, explicit channel-based e-value replay, CPU detection
+and transition plots, and a Slurm generation sweep, see
+[the grouped watermark experiment](docs/grouped_watermark.md).
+
 For the delta=0 Spark-TTS experiment using ordinary keyed semantic sampling and
 match-count detection, see [the code walkthrough](docs/keyed_sparktts.md).
 Run it with `python -m evals.keyed_sparktts generate --help`. This experiment

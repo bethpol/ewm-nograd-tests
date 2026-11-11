@@ -1,0 +1,105 @@
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Generating sparktts: calibration_000
+  Saved WAV; 243 original / 242 recovered tokens
+Generating sparktts: calibration_001
+  Saved WAV; 239 original / 238 recovered tokens
+Generating sparktts: calibration_002
+  Saved WAV; 247 original / 246 recovered tokens
+Generating sparktts: calibration_003
+  Saved WAV; 227 original / 226 recovered tokens
+Generating sparktts: calibration_004
+  Saved WAV; 243 original / 242 recovered tokens
+Generating sparktts: calibration_005
+  Saved WAV; 244 original / 243 recovered tokens
+Generating sparktts: calibration_006
+  Saved WAV; 231 original / 230 recovered tokens
+Generating sparktts: calibration_007
+  Saved WAV; 257 original / 256 recovered tokens
+Generating sparktts: calibration_008
+  Saved WAV; 254 original / 253 recovered tokens
+Generating sparktts: calibration_009
+  Saved WAV; 258 original / 257 recovered tokens
+Generating sparktts: watermarked_000
+  Saved WAV; 257 original / 256 recovered tokens
+Generating sparktts: watermarked_001
+  Saved WAV; 239 original / 238 recovered tokens
+Generating sparktts: watermarked_002
+  Saved WAV; 251 original / 250 recovered tokens
+Generating sparktts: watermarked_003
+  Saved WAV; 237 original / 236 recovered tokens
+Generating sparktts: watermarked_004
+  Saved WAV; 243 original / 242 recovered tokens
+Generating sparktts: watermarked_005
+  Saved WAV; 252 original / 251 recovered tokens
+Generating sparktts: watermarked_006
+  Saved WAV; 244 original / 243 recovered tokens
+Generating sparktts: watermarked_007
+  Saved WAV; 255 original / 254 recovered tokens
+Generating sparktts: watermarked_008
+  Saved WAV; 235 original / 234 recovered tokens
+Generating sparktts: watermarked_009
+  Saved WAV; 251 original / 250 recovered tokens
+Generating sparktts: watermarked_010
+  Saved WAV; 235 original / 234 recovered tokens
+Generating sparktts: watermarked_011
+  Saved WAV; 241 original / 240 recovered tokens
+Generating sparktts: watermarked_012
+  Saved WAV; 252 original / 251 recovered tokens
+Generating sparktts: watermarked_013
+  Saved WAV; 236 original / 235 recovered tokens
+Generating sparktts: watermarked_014
+  Saved WAV; 246 original / 245 recovered tokens
+Generating sparktts: watermarked_015
+  Saved WAV; 258 original / 257 recovered tokens
+Generating sparktts: watermarked_016
+  Saved WAV; 250 original / 249 recovered tokens
+Generating sparktts: watermarked_017
+  Saved WAV; 265 original / 264 recovered tokens
+Generating sparktts: watermarked_018
+  Saved WAV; 231 original / 230 recovered tokens
+Generating sparktts: watermarked_019
+  Saved WAV; 254 original / 253 recovered tokens
+Generating sparktts: unwatermarked_000
+  Saved WAV; 227 original / 226 recovered tokens
+Generating sparktts: unwatermarked_001
+  Saved WAV; 245 original / 244 recovered tokens
+Generating sparktts: unwatermarked_002
+  Saved WAV; 263 original / 262 recovered tokens
+Generating sparktts: unwatermarked_003
+  Saved WAV; 258 original / 257 recovered tokens
+Generating sparktts: unwatermarked_004
+  Saved WAV; 245 original / 244 recovered tokens
+Generating sparktts: unwatermarked_005
+  Saved WAV; 244 original / 243 recovered tokens
+Generating sparktts: unwatermarked_006
+  Saved WAV; 247 original / 246 recovered tokens
+Generating sparktts: unwatermarked_007
+  Saved WAV; 248 original / 247 recovered tokens
+Generating sparktts: unwatermarked_008
+  Saved WAV; 246 original / 245 recovered tokens
+Generating sparktts: unwatermarked_009
+  Saved WAV; 240 original / 239 recovered tokens
+Generating sparktts: unwatermarked_010
+  Saved WAV; 235 original / 234 recovered tokens
+Generating sparktts: unwatermarked_011
+  Saved WAV; 255 original / 254 recovered tokens
+Generating sparktts: unwatermarked_012
+  Saved WAV; 253 original / 252 recovered tokens
+Generating sparktts: unwatermarked_013
+  Saved WAV; 247 original / 246 recovered tokens
+Generating sparktts: unwatermarked_014
+  Saved WAV; 253 original / 252 recovered tokens
+Generating sparktts: unwatermarked_015
+  Saved WAV; 235 original / 234 recovered tokens
+Generating sparktts: unwatermarked_016
+  Saved WAV; 243 original / 242 recovered tokens
+Generating sparktts: unwatermarked_017
+  Saved WAV; 245 original / 244 recovered tokens
+Generating sparktts: unwatermarked_018
+  Saved WAV; 252 original / 251 recovered tokens
+Generating sparktts: unwatermarked_019
+  Saved WAV; 247 original / 246 recovered tokens
+Channel fit on 2433 pairs; source counts per group: [584, 672, 577, 600]
+Saved detection.json and per-sample evidence paths in /u/epolito/ewm-nograd-tests/cleancode/watermark_samples/random_groups_20261110/sparktts_groups4
+Saved /u/epolito/ewm-nograd-tests/cleancode/watermark_samples/random_groups_20261110/sparktts_groups4/log_e.png (also PDF and CSV)

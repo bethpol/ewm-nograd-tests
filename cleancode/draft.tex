@@ -1,0 +1,1064 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath, amssymb, amsfonts, amsthm, mathrsfs}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[margin=0.85in]{geometry} % more text per page
+\usepackage{tcolorbox}
+\usepackage{hyperref} 
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\newcommand{\DKL}{D_{\mathrm{KL}}}
+\newcommand{\FID}{\texttt{FID}}
+\newcommand{\TRC}{\text{TRC}}
+\newcommand{\emb}{\texttt{Emb}}
+\newcommand{\enc}{\mathsf{Enc}}
+\newcommand{\dec}{\mathsf{Dec}}
+\newcommand{\gen}{\mathsf{Gen}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\sk}{\texttt{sk}}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{problem}[theorem]{Problem}
+
+\newcommand{\emp}[1]{{\color{purple} [Beth: #1]}}
+
+\newcommand{\Eric}[1]{{\color{mint}[Eric: #1]}}
+
+\definecolor{mint}{RGB}{62, 180, 137}
+
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{claim}[theorem]{Claim}
+
+
+\title{Robust Anytime-Valid Statistical Watermarking for Synthetic Speech}
+\author{Beth Polito \quad Eric Xu \quad Amy Li}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    
+    Anytime-valid statistical watermarking allows for statistically-valid detection of watermarked content using e-value-based tests. This technique is especially useful when one wishes to flag watermarked content as quickly as possible, such as when the content is received in a streaming fashion. Motivated by the phenomenon of retokenization mismatch present in neural audio codec models, which arises from the process of converting between discrete tokens and continuous waveforms via learned models, we study optimal statistical watermarking of a process given that the detector only has access to a noisy version of the samples. We derive the optimal log-growth rate of an anytime-valid watermark given the samples are passed through a known channel, which we show scales as the mutual information of the channel. Furthermore, we present a practical algorithm that implements this theory on popular neural audio codec models including Spark-TTS and RaonSpeech, showing performance of xyz.
+\end{abstract}
+
+\section{Technical Overview}
+
+
+\begin{tcolorbox}[
+    colback=white,
+    colframe=green!80!black,
+    rounded corners=southeast,
+    title=Statistical Watermarking Problem Overview
+]
+
+\centering
+\includegraphics[width=0.8\linewidth]{figures/overview_diagram.pdf}
+\captionof{figure}{Basic overview of theoretical setting with notation - note that we will have to consider the case where $s\neq s'$ (unsynchronized seeds).
+}
+\label{fig:overview}
+
+\end{tcolorbox}
+\section{Preliminaries}
+$I_p(X;Y)$ denotes the Shannon mutual information of $X,Y$ under joint law $p$.
+\section{Regimes for Results [Beth]}
+The leftmost column separates between fixed, known models between embedding and detection (top) vs. different models between embedding and detection with TV controlled by the $\delta$ ball.
+\[
+\begin{array}{c|c|c}
+& P_c = I~(\gamma=0)
+& P_c \neq I\ \text{known}~(\gamma=0)
+\\ \hline
+\delta = 0
+&
+\begin{array}{c}
+\text{Clean, matched}\\
+\text{baseline, \textbf{Huang et al.}}
+\end{array}
+&
+\begin{array}{c}
+\text{Known retokenization}\\
+\text{mismatch, \textbf{solved} in \ref{sec:del0_pc_neq_I_known}}
+\end{array}
+\\[12pt]
+\delta > 0
+&
+\begin{array}{c}
+\text{Distributionally robust}\\
+\text{\textbf{Huang et al.}}
+\end{array}
+&
+\begin{array}{c}
+\text{Distributionally robust}\\
+\text{+ retokenization, in \ref{sec:delnon0_pcknown}}
+\end{array}
+\end{array}
+\]
+
+\paragraph{Practical considerations relevant for all $6$ regimes:}
+\begin{itemize}
+    \item Seed synchronization, Section \ref{sec:seed_sync}
+    \item Channel estimation algorithm (Probably ML suffices, but we should formalize), Section \ref{sec:channel_estimation}
+    \item Token groupings for practical implementation (in Baihe's paper, we should formalize), Section \ref{sec:token_groupings}
+\end{itemize}
+
+
+\section{Theoretical Results [Eric]}
+\label{sec:delnon0_pcknown}
+
+\subsection{Robust E-Watermarks Problem Setting}
+In this section we formulate the problem of robust (anchored) e-watermarking in which we assume that both the detector and generator share access to an \textit{anchored distribution} $p_0$ which lies in the same probability simplex as the target distribution $q$ -- i.e. for the token vocabulary $\mathcal{V}$, we consider the simplex $\Delta(\mathcal{V})$.
+
+...
+
+The point at which this work differs from [insert past paper here] is in the detection phase. Here we consider the problem of \textit{token observation noise} which is motivated by retokenization mismatch in the audio generation literature [insert papers here]. In particular, we consider the case where the detector, instead of receiving the true token-seed pair $(v,s)$, receives a noised version $(v', s)$ where the noised token $v'$ is obtained from a noisy channel $v' \sim P_{c}(\cdot\mid v)$. 
+
+\textit{Desideratum}: Need structural assumption on $P_c$ (channel). Perhaps make note that $P_c$ cannot be arbitrary (e.g. uniform over the vocabulary), otherwise this watermarking is useless. So in this sense, there must be an upper bound on the randomness (entropy) of the channel or some sparsity structure that can be leveraged. 
+
+\paragraph{Generator} (Largely remains the same)
+
+Recall that the objective of the generator is to embed the statistical signal $s$ into the generated output $v$ from the target distribution $q$. Towards this end, the generator couples $v$ and $s$ via a joint distribution $w$. We define the feasible set of couplings as 
+\begin{equation}\label{eq:feascouplings}
+    \mathcal{P}(p_0,q) := \left\{w \in \Delta(\mathcal{V} \times \mathcal{V}): \sum_{s \in \mathcal{V}}w(v,s) = q(v), ~ \sum_{v \in \mathcal{V}}w(v,s) = p_0(s)\right\},
+\end{equation}
+observe that any such coupling will generate tokens $v$ from the original target distribution $q$, meaning, the generator is \textit{distortion-free}.
+
+\paragraph{Detection.}
+For now, we assume that the seed is perfectly reconstructable (synchronization assumption, or e.g. $S_t = \text{PRG}(\text{key}, t)$ where $\text{key}$ is the secret key and $t$ is the token position) and that the detector knows the distribution of the channel $P_c$. 
+
+Since the noised observation of the token only occurs on the detector's side, the marginal distribution of the noised token $v'$ seen by the detector can be written as 
+\begin{equation}\label{eq:noisymarginal}q_n(v') := \sum_{v \in \mathcal{V}}P_c(v'\mid v)q(v).\end{equation}
+Recall the set
+\begin{equation}\label{eq:l1ball}\mathcal{Q}(p_0,\delta) = \{q \in \Delta(\mathcal{V}) : \lVert q - p_0\rVert_1 \le \delta \},\end{equation}
+the noisy e-watermarking problem is not immediately solved by the regular e-watermarking problem as can be seen from the following:
+
+\begin{example}
+Let $p_0 = \begin{bmatrix}
+     0.9 & 0.1
+\end{bmatrix}$, and $q \in \mathcal{Q}(p_0,0.1)$. Now let 
+\[P_c := \begin{bmatrix}
+    0 & 1 \\
+    1 & 0
+\end{bmatrix},\]
+then for any $q \in \mathcal{Q}(p_0,\delta)$, we have that 
+$$q_n = qP_c = \begin{bmatrix}
+    q_2 & q_1
+\end{bmatrix},$$
+but 
+$$\lvert 0.9 - q_1\rvert + \lvert 0.1 - q_2\rvert \le 0.1 \implies q_1 \in [0.8,1], \quad q_2 \in [0,0.2],$$
+and hence
+$$\lVert q'-p_0\rVert_1 = \lvert 0.9 - q_2 \rvert + \lvert 0.1 - q_1\rvert \ge 0.7 > 0.1.$$
+Observe that $q_n \not \in \mathcal{Q}(p_0,0.1)$.
+
+
+\end{example}
+
+
+
+The detector sequentially receives outcome signal pairs $(v',s)$ where $v' \sim q_n$ as in \eqref{eq:noisymarginal}. Denote the noised-joint coupling as:
+\begin{equation}\label{eq:noisy-coupling}w_n(v',s) := \sum_{v \in \mathcal{V}}P_c(v'\mid v) w(v,s).\end{equation}
+The noisy Hypothesis Testing problem is then:
+\begin{align*}
+    \textbf{H}_0: &~ v' \sim q_n \text{ and } s \sim p_0 \text{ are sampled independently} \\
+    \textbf{H}_1: &~ (v',s) \text{ are sampled from a joint coupling }w_n.
+\end{align*}
+Thus, in the case where $v'$ is watermarked, the token-seed pair $(v',s)$ is drawn from the coupling defined in \eqref{eq:noisy-coupling}.
+
+
+To bound Type-I error by $\alpha$, the e-value we will construct is subject to the constraint:
+\begin{equation}\label{eq:e-null}
+    \sup_{q \in \Delta(\mathcal{V})}\mathbb{E}_{v \sim q, s \sim p_0}[e(v,s)] \le 1.
+\end{equation}
+We denote all non-negative $e: \mathcal{V} \times \mathcal{V} \mapsto \mathbb{R}_{\ge 0}$ satisfying \eqref{eq:e-null} as $\mathcal{E}$, the set of valid of e-values. 
+
+Now we define the robust noisy log-optimality problem:
+\begin{equation}\label{eq:robust-noisy-log-prob}
+    \sup_{e \in \mathcal{E}}\inf_{q \in \mathcal{Q}(p_0,\delta)}\sup_{w \in \mathcal{P}(p_0,q)}\sum_{v',s \in \mathcal{V}}w_n(v',s) \cdot \log e(v',s).
+\end{equation}
+Note that the objective is the log-growth rate under the alternative. Furthermore, note that in the original formulation, the expectation is taken over the joint coupling formed by the generator $w$, but here, we instead consider the noisy joint coupling \eqref{eq:noisy-coupling} induced by the channel. 
+
+\subsection{Two Token Case}
+We derive the closed form solution to the problem in \eqref{eq:robust-noisy-log-prob}. Let $P_c$ be any noisy channel, and the vocabulary be defined as $\mathcal{V} = \{0,1\}$; hence the target distribution and anchored distribution belong to 1-parameter families:
+\[q = \begin{bmatrix}
+    q_0 & 1-q_0
+\end{bmatrix}, \quad p_0 = \begin{bmatrix}
+    p_0 & 1-p_0
+\end{bmatrix} \]
+(we overload on notation for the parameter and distribution $p_0$). Observe that the observation channel belongs to a 2-parameter family:
+\[P_c = \begin{bmatrix}
+    a & 1-a \\
+    1-b & b
+\end{bmatrix},\]
+where $P(v' = 0 \mid v = 0) = a$ and $P(v' = 1 \mid v =1) = b$.
+Similarly, we let the candidate couplings have diagonal entries $(w_0, w_1)$ where $P(v = 0, s = 0) = w_0$ and $P(v=1, s= 1) = w_1$, observe that this system given $(q,p_0, w_0, w_1)$ is fully determined by the constraints in $\mathcal{P}(p_0,q)$: 
+\begin{align*}p_0 = w_0 + w(1, 0), \quad &1-p_0 = w_1 + w(0,1) \\
+q_0 = w_0 + w(0,1), \quad & 1-q_0 = w_1 + w(1,0),
+\end{align*}
+hence, $w$ is also belongs to a 2-parameter family.
+
+For any $e \in \mathcal{E}$, we have 
+\[ \sup_{q \in \Delta(\mathcal{V})} \mathbb{E}_{q \sim v, p_0 \sim s} [e(v,s)] = \sum_{v,s \in \mathcal{V}}q(v)p_0(s)e(v,s) \le 1\]
+reduces to two constraints:
+\begin{align}\label{eq:enull_const}
+    &p_0(0)e(0,0) + p_0(1)e(0,1) \le 1, \\
+    &p_0(0)e(1,0) + p_0(1)e(1,1) \le 1 \nonumber 
+\end{align}
+(note that the $q$ which produce these constraints are the diracs: $q(v) = 1$, this establishes necessity), hence 
+which ensures that for any $q \in \Delta(\mathcal{V})$, we have 
+\[ q(0)\sum_{s}p_0(s)e(0,s) + q(1)\sum_{s}p_0(s)e(1,s) \le q(0) + q(1) =1.\]
+hence \eqref{eq:e-null} is equivalent to \eqref{eq:enull_const} in the two token case (the generalization is immediate).
+
+
+\paragraph{The Linear Program}
+The linear program in general can be written as:
+\begin{align}\label{eq:lp}
+    \sup_{e}\inf_{q \in \mathcal{Q}(p_0,\delta)}\sup_{w \in \mathcal{P}(p_0,q)} &~\sum_{v',s}\left(\sum_{v}P_c(v'\mid v)w(v,s)\right)\log e(v',s)\\
+    \text{s.t.} &~ \sum_{s} p_0(s)e(v',s) \le 1, ~~\forall v' \in \mathcal{V}, \nonumber  \\
+    &~e(v',s) \ge 0, ~~\forall (v',s) \in \mathcal{V}\times \mathcal{V}. \nonumber 
+\end{align}
+where the constraints sets for the target distribution and coupling are respectively
+\[\mathcal{Q}(p_0,\delta) = \left\{q\in \Delta ( \mathcal{V}) : \lVert q - p_0\rVert_1 \le \delta\right\}, \quad \mathcal{P}(p_0,q) = \left\{w \in \Delta(\mathcal{V} \times \mathcal{V}): 1^\top w = p_0, ~ w\cdot 1 = q\right\}.\]
+Let the seed-scaled e-value at node $v'$ be 
+\[A(v') := \sum_s p_0(s) e(v',s).\]
+Note that we can take any valid e-value scheme to be such that $e(v',s) > 0$ for all $(v',s)$ since otherwise the value obtained by the inner maximization would be $-\infty$, and thus, $A(v') > 0$ as well. 
+
+\begin{lemma}\label{lem:row-normalized}
+    It is WLOG to row-normalize e-values such that $A^*(v') = \sum_sp_0(s)e(v',s) = 1.$
+\end{lemma}
+\begin{proof}
+
+\emp{This whole proof can be greatly simplified by showing you can maximize the objective pointwise by row-normalization. Then treat 0-valued e-values as a special case. }
+    Define $\overline{e}(v',s) := e(v',s)/A(v')$. Trivially, $\sum_s\overline{e}(v',s)p_0(s) = 1$ makes $\overline{e}$ a valid e-value. Note that the objective can be rewritten as 
+\[\sum_{v',s}w_n(v',s)\log e(v',s) = \sum_{v',s}w_n(v',s)\log \overline{e}(v',s) + \sum_{v',s}w_n(v',s)\log A(v'),\]
+now observe that for any $w \in \mathcal{P}(p_0, q)$,
+\[\sum_{s}w_n(v',s) = \sum_{v}P_c(v'\mid v)\sum_{s} w(v,s) = q_n(v').\]
+Rewriting the second sum in the objective using the identity above, we apply Jensen's inequality to obtain 
+\[\sum_{v'}q_n(v')\log A(v') \le \log \sum_{v'}q_n(v')A(v') \le 0,\]
+where the final inequality is obtained via the null-constraints in \eqref{eq:lp}. Therefore, we have that
+\[\inf_{q \in \mathcal{Q}(p_0,\delta)}\sup_{w \in \mathcal{P}(q,p_0)}\mathbb{E}_{(v',s) \sim w_n}\log e(v',s) \le \inf_{q \in \mathcal{Q}(p_0,\delta)}\sup_{w \in \mathcal{P}(q,p_0)}\mathbb{E}_{(v',s)\sim w_n}\log \overline{e}(v',s).\]
+Thus, letting $J(e)$ and $J(\overline{e})$ be the LHS and RHS of the previous display, we observe that any row-normalization of an e-value $e$, $\overline{e}$, attains improved objective $J(\overline{e}) \ge J(e)$. 
+\end{proof}
+
+Hence, define the seed-weighted e-value $r(v,s) := p_0(s)e(v,s)$ and its constraint set:
+\begin{equation}\label{eq:seed-e-const}
+    \mathcal{R} := \left\{r \in \mathbb{R}^{\mathcal{V} \times \mathcal{V}}: \sum_s r(v,s) = 1, ~ r(v,s) \ge 0, ~ \forall v,s\in \mathcal{V}\right\}.
+\end{equation}
+Applying Lemma \ref{lem:row-normalized}, the linear program in \eqref{eq:lp} reduces to
+\[J' := \sup_{r \in \mathcal{R}}\inf_{q \in \mathcal{Q}(p_0,\delta)}\sup_{w \in \mathcal{P}(p_0,q)}\sum_{v',s}w_n(v',s)\cdot (\log r(v',s) - \log p_0(s)). \]
+
+\begin{lemma}\label{lem:ext_q}
+    Let $r \in \mathcal{R}$ and define
+    \[\Phi_r(q) := \sup_{w \in \mathcal{P}(p_0,q)}\sum_{v',s}w_n(v',s)\log r(v',s).\]
+    Then the optimization problem over $q$ reduces to
+    \[\inf_{q \in \mathcal{Q}(p_0,\delta)}\Phi_r(q) = \inf_{q \in \mathcal{Q}_{\text{ext}}(p_0,\delta)}\Phi_r(q),\]
+    where we define the set of extrema:
+    \[\mathcal{Q}_{\text{ext}}(p_0,\delta) := \left\{p_0 + \frac{\delta}{2}(\textbf{e}_a-\textbf{e}_b) : a\neq b \in \mathcal{V}\right\}.\]
+\end{lemma}
+\begin{proof}
+    First observe that $\Phi_r$ is concave in $q$. Let $w_i$ be optimal for $q_i$ for $i=1,2$, then $\lambda w_1 + (1-\lambda)w_2 \in \mathcal{P}(p_0,\lambda q_1 + (1-\lambda)q_2)$, and thus,
+    \[\Phi_r(\lambda q_1 + (1-\lambda)q_2) \ge \sum_{v',s} (\lambda w_{n,1}(v',s) + (1-\lambda)w_{n,2}(v',s))\log r(v',s) = \lambda \Phi_r(q_1) + (1-\lambda)\Phi_r(q_2).\]
+    Thus, since $\Phi_r$ is concave on the compact polytope $\mathcal{Q}(p_0,\delta)$, it achieves its minimum on the boundary set $\mathcal{Q}_{\text{ext}}(p_0,\delta)$.
+\end{proof}
+
+Observe that 
+\[\sum_{v',s}w_n(v',s) \log p_0(s) = \sum_{v'}\sum_{v,s} P_c(v'\mid v) w(v,s)\log p_0(s) = -H(p_0),\]
+since $P_c$ is row-stochastic.
+
+Now, the linear program in \eqref{eq:lp} for the two-token case reduces to 
+\begin{align}\label{eq:reducedlp}
+    \sup_{r \in \mathcal{R}}\inf_{q \in \mathcal{Q}_{\text{ext}}(p_0,\delta)}\sup_{w \in \mathcal{P}(p_0,q)}\sum_{v',s}(w_n(v',s) \log r(v',s)) + H(p_0),
+\end{align}
+in which the constraint set $\mathcal{R}$ reveals that  $r(v,0) = 1-r(v,1),$
+which we will call $r_v := r(v,0)$. Now observe that from the constraints, $w$ must satisfy:
+\[w(0,0) + w(1,0) = p_0, \quad w(0, 0) + w(0, 1) = q_0, \quad w(0,1) + w(1,1) = 1-p_0, \quad w(1,0) + w(1,1) = 1-q_0. \]
+Then from this, we can take $w := w(0,0)$ and note that 
+\[w(1,0) = p_0 - w, \quad w(0,1) = q_0 - w, \quad w(1,1) = 1-p_0 - q_0 + w,\]
+which reduces the joint distribution to a single parameter $w$. Now define surrogate log e-values as 
+\begin{equation}\label{eq:surrogate_loge}
+    \tilde{r}(v,s) := \sum_{v'}P_c(v'\mid v) \log r(v',s),
+\end{equation}
+which can be thought of as the ``true evidence'' coming from the pair $(v,s)$.
+
+
+Given an $r \in \mathcal{R}$, the inner optimization over the generator in \eqref{eq:reducedlp} can be written as 
+\[\sup_{w \in \mathcal{P}(p_0,q)} w\cdot (\tilde{r}(0,0) - \tilde{r}(1,0) - \tilde{r}(0,1) + \tilde{r}(1,1)) + \cdots.\]
+We can directly write the sum in the parentheses as 
+\[S(r) := (a+b-1)\log \frac{r_0(1-r_1)}{r_1(1-r_0)},\]
+
+Hence, if $r_0 > r_1$ (and hence $S(r) > 0$), $w_+(q_0) = \min(p_0,q_0)$ and otherwise, $w_-(q_0) = \max(0,p_0+q_0-1)$. Then the corresponding noised coupling (the joint coupling seen after passing through the channel) is $w_{n,\tau}(q) := P_c^\top w_\tau(q)$ where $\tau \in \{-,+\}$ denotes whether we take a maximal or minimal coupling.
+
+Let $\mathcal{Q}_{\text{ext}}(p_0,\delta) = \{q_-,q_+\}$ where $q_- = p_0 - \frac{\delta}{2}(e_0-e_1)$ and $q_+ = p_0 + \frac{\delta}{2}(e_0-e_1)$. For graphic illustration, observe that 
+\[w_{-}(q_-) = \begin{bmatrix}
+    w_- & p_0-\frac{\delta}{2}-w_- \\
+    p_0 - w_- & 1-2p_0 + \frac{\delta}{2} + w_-
+\end{bmatrix}\]
+and similarly for $w_{+}(q_+)$. Supposing that we favor maximizing coupling mass, we have $w = w_+(q_0) = \min (p_0,q_0)$. Under this assumption, we have 
+\[w(q_-) = \begin{bmatrix}
+    p_0 - \frac{\delta}{2} & 0 \\
+    \frac{\delta}{2} & 1- p_0
+\end{bmatrix}, \quad w(q_+) = \begin{bmatrix}
+    p_0 & \frac{\delta}{2} \\
+    0 & 1-p_0 -\frac{\delta}{2}
+\end{bmatrix},\]
+which is precisely speculative decoding $w = \text{diag}(p_0) + \frac{\delta}{2}(e_{a}e_{b}^\top - e_{b}e_{b}^\top)$.
+
+
+Now observe that \eqref{eq:reducedlp} can now be reduced to the following problem:
+\begin{equation}\label{eq:pm_problems}
+    H(p_0) + \max_{\tau \in \{+,-\}}\sup_{r \in \mathcal{R}_{\tau}}\min \{ \mathbb{E}_{w_{n,\tau}(q_+)}[\log r], \mathbb{E}_{w_{n,r}(q_-)}[\log r]\},
+\end{equation}
+where $\mathcal{R}_{\tau} := \{r \in \mathcal{R}: \text{sign}(S(r)) = \tau\}$ where in this case $\text{sign}: \mathbb{R} \mapsto \{+,-, 0\}$ under the usual mapping. Now define the convex combination:
+\[w_{n,\tau}^\lambda := \lambda w_{n,-} + (1-\lambda) w_{n,+},\]
+which we can use to rewrite the inner optimization in \eqref{eq:pm_problems} as:
+\[\min_{\lambda \in [0,1]}\sup_{r \in \mathcal{R}_{\tau}}\mathbb{E}_{w_{n,\tau}^\lambda}[\log r],\]
+where the $\min$ and $\sup$ are permitted to swap by the convex-concave minimax theorem. Now observe that the $r$ which maximizes such an optimization problem can be obtained by the following argument:
+\[\mathbb{E}_{(v',s) \sim w_n}[\log r(v',s)] = \mathbb{E}_{v'} [\mathbb{E}_{s \sim \Pr_{w_n}(\cdot 
+\mid v')}[\log r(v',s)\mid v']].\]
+Now decompose the conditional expectation as:
+\[\mathbb{E}_{s \sim \Pr_{w_n}(\cdot\mid v')}[\log \Pr_{w_n}( s\mid v') - D_{\text{KL}}(\Pr_{w_n}(s\mid v') \Vert r(v',s) ) \mid v'].\] 
+Because $D_{\text{KL}} \ge 0$, the optimizer over $r \in \Delta(\mathcal{V})$ is $r^*(v',s) = \Pr_{w_n}(s\mid v') = \frac{w_n(v',s)}{q_n(v')},$ in which it is easy to show that $q_n(v') = \sum_{s}w_n(v',s)$. Hence, under this candidate $r^*$ the optimal value is 
+\[H(p_0) - \max_{\tau \in \{+,-\}}\min_{\lambda \in [0,1]}H_{w_{n,\tau}^\lambda}(s \mid v') =  \max_{\tau \in \{+,-\}}\min_{\lambda \in [0,1]}I(w_{n,\tau}^\lambda).\]
+\Eric{Todo, finish showing candidate $r^*$ is in $\mathcal{R}_{\tau}$}
+
+Observe that since $M_\tau^\lambda = P_c^\top W_\tau^\lambda$, we have that 
+\[\sum_{v'}M_\tau^\lambda(v',s) = \sum_v\sum_{v'}P_c(v'\mid v)w_\tau^\lambda(v,s) = p_0(s),\]
+therefore, $I(w_{n,\tau}^\lambda)$ 
+
+\subsection{Case Study: A Binary Symmetric Channel}
+In this section, I pose a worked, numerical example of the $\delta>0$ case to illustrate the coupling and how our detector improves upon the baseline. Let
+\begin{equation}
+    p_0=(0.5,0.5),\quad \delta=0.5
+\end{equation}
+and define a BSC with
+\begin{equation}
+    P_c=\begin{bmatrix}
+        0.9 & 0.1 \\
+        0.1 & 0.9
+    \end{bmatrix}.
+\end{equation}
+By our definition of the $\delta$-TV radius, we allow
+\begin{equation}
+    q=(u,1-u),\quad u\in [0.25, 0.75].
+\end{equation}
+Note that by the linearity of the inner objective in the coupling $w$, we know that the supremum is achieved at the endpoint. Using the derivation in the previous section, we can numerically calculate the $w_+$ and $w_-$ couplings. We obtain the noisy observation coulings of $(V',S)$ by multiplying $w_{n,x}:=P_c^T w_x$. We obtain
+\begin{equation}
+    w_{n,+}(v',s)=\begin{bmatrix}
+        0.25 & 0.05 \\
+        0.25 & 0.45
+    \end{bmatrix} \quad
+    w_{n,-}(v',s)=\begin{bmatrix}
+        0.45 & 0.25 \\
+        0.05 & 0.25
+    \end{bmatrix}.
+\end{equation}
+We then set up our optimization problem for the optimal e-value, starting with
+\begin{equation}
+    e=\begin{bmatrix}
+        e_{00} & e_{01} \\
+        e_{10} & e_{11}
+    \end{bmatrix}.
+\end{equation}
+Using the defining property of e-values, we know that
+\begin{equation}
+    \sum_s p_0(s)e(v',s)\leq 1.
+\end{equation}
+Therefore,
+\begin{align}
+    e_{00}+e_{01}&\leq 2\\
+    e_{10}+e_{11}&\leq 2
+\end{align}
+and we may conclude that the optimal e-value satisfies these conditions with equality as doing so cannot decrease the growth rate objective. Furthermore, we argue that a symmetric detector is optimal because the anchor distribution is uniform, the BSC is symmetric, and the worst-case target distributions are symmetric. All together, we can write
+\begin{equation}
+    e=\begin{bmatrix}
+        x & 2-x \\
+        2-x & x
+    \end{bmatrix}.
+\end{equation}
+Now that we have reduced our optimization problem to one scalar, we can simply optimize
+\begin{equation}
+    J(x)=0.7 \log(x)+0.3\log(2-x)
+\end{equation}
+to obtain $x=1.4$.
+
+
+\section{Solution for $\delta=0$, $P_c\neq I$ Known [Beth]}
+\label{sec:del0_pc_neq_I_known}
+
+As in the direct-observation case investigated by Huang et al. \cite{huang2026anytime}, our goal is to obtain the optimal log-growth rate and explicit embedding/detecting algorithms that achieve this rate. Recall that the optimal growth rate, which we will refer to by $J^\star$, is given by
+\begin{equation}
+    J^\star := \sup_{e\in\mathcal{E}}\inf_{q\in\mathcal{Q}(p_0, \delta)}\sup_{w\in\mathcal{P}(p_0,q)}\sum_{v', s\in\mathcal{V}}w_n(v',s)\cdot\log e(v', s)
+\end{equation}
+where
+\begin{equation}
+    w_n(v', s)=\sum_{v\in\mathcal{V}}P_c(v'|v)w(v,s)
+\end{equation}
+
+Recall that the optimal coupling for this problem is given by the SEAL embedder. In the case where $\delta=0$, we have
+\begin{equation}
+    e^\star(v',s)=\begin{cases}
+        \frac{1}{p_0(s)}&\text{if}~s=v'\\
+        0&\text{if}~s\neq v'.
+    \end{cases}
+\end{equation}
+
+In our new setting, we likewise set $\delta=0$, which implies that $q=p_0$, and assume further that $P_c\neq I$ and is known. Therefore, our optimization problem becomes
+
+\begin{equation}
+    J^\star := \sup_{e\in\mathcal{E}, w\in\mathcal{P}(p_0,p_0)}\sum_{v', s\in\mathcal{V}}w_n(v',s)\cdot\log e(v', s)
+\end{equation}
+
+
+
+We conjecture that in the $\delta=0$, $P_c\neq I$ known case, the optimal e-value is given by
+\begin{equation}
+    e^\star(v',s)=\frac{\Pr(S=s|V'=v')}{p_0(s)}.
+\end{equation}
+
+Qualitatively, this e-value would mean that we weight $\frac{1}{p_0(s)}$ as in the previously-solved case by the posterior probability that the seed was $s$ given observation $v'$ under the channel model, which would subsume the $P_c=I$ setting as a clear sub-case.
+
+\begin{lemma}
+\label{lem:del0_Pc_fixed_valid_evalue}
+Consider the setting above and assume that $p_0(s)>0$ for all $s\in\mathcal{V}$.
+\begin{equation}
+    e^\star(v',s)=\frac{\Pr(S=s|V'=v')}{p_0(s)}.
+\end{equation}
+is a valid e-value.
+\end{lemma}
+\begin{proof}
+Fix any $v'\in\mathcal{V}$. We have
+\begin{equation}
+    \sum_s p_0(s)e^\star(v',s)=\sum_s \Pr(S=s|V'=v')=1
+\end{equation}
+by the normalization of probability distributions. Therefore, $e^\star(v',s)$ is row-normalized, which implies the required result.
+\end{proof}
+
+\begin{lemma}[Fixed-coupling optimality]
+\label{lem:del0_Pc_fixed_coupling_optimality}
+Fix a $w\in \mathcal{P}(p_0,p_0)$, and recall that we define $w_n$ as the joint distribution over $(S,V')$ where $V'$ is the noisy token observed as the output of the channel governed by $P_c$. Then we have
+\begin{equation}
+\sup_{e\in\mathcal{E}}\sum_{v',s}w_n(v',s)\log e(v',s)=I_w(S;V')
+\end{equation}
+where the supremum is attained by
+\begin{equation}
+e_w^\star(v',s)
+=
+\frac{\Pr_w(S=s\mid V'=v')}{p_0(s)}.
+\end{equation}
+    
+\end{lemma}
+
+
+\begin{proof}
+Fix $w\in\mathcal{P}(p_0,p_0)$. Without loss of generality, we may restrict attention to row-normalized $e$-values. Indeed, for any valid
+$e$-value, let
+\begin{equation}
+Z(v'):=\sum_s p_0(s)e(v',s)\leq 1.
+\end{equation}
+If $Z(v')>0$, dividing $e(v',s)$ by $Z(v')$ preserves validity and cannot decrease the objective. If $Z(v')=0$, we may instead set $e(v',s)=1$, which also preserves validity and cannot decrease the objective.
+
+Now let $e$ be a row-normalized $e$-value, and define
+\begin{equation}
+    r_e(s\mid v'):=p_0(s)e(v',s).
+\end{equation}
+By nonnegativity and row normalization, $r_e(\cdot\mid v')$ is a valid probability distribution for each $v'$.
+
+We can rewrite our objective as
+\begin{align}
+\sum_{v',s}w_n(v',s)\log e(v',s)
+&=\E_w[\log e(V',S)]\\
+&=\E_w\left[
+    \log\frac{r_e(S\mid V')}{p_0(S)}
+\right]\\
+&=\E_w\left[
+    \log\frac{\Pr_w(S\mid V')}{p_0(S)}
+\right]
+-\E_w\left[
+    \log\frac{\Pr_w(S\mid V')}{r_e(S\mid V')}
+\right]\\
+&=I_w(S;V')
+-\E_{V'}\left[
+    \DKL\left(
+        \Pr_w(S\mid V')
+        \,\Vert\,r_e(\cdot\mid V')
+    \right)
+\right]
+\end{align}
+where the third line follows by multiplying and dividing by $\Pr_w(S\mid V')$ inside the logarithm, and the fourth line follows from the definitions of mutual information and KL divergence.
+
+By the nonnegativity of KL divergence, the second term is nonpositive, so the expected log-growth is upper-bounded by $I_w(S;V')$.
+Equality is attained when
+\begin{equation}
+    r_e(s\mid v')=\Pr_w(S=s\mid V'=v')
+\end{equation}
+for every $v'$ with positive probability.
+
+Recalling the definition of $r_e$, this corresponds to
+\begin{equation}
+    e_w^\star(v',s)
+    =\frac{\Pr_w(S=s\mid V'=v')}{p_0(s)}.
+\end{equation}
+By Lemma \ref{lem:del0_Pc_fixed_valid_evalue}, this is a valid $e$-value. For any $v'$ with zero probability, we may set $e_w^\star(v',s)=1$.
+
+Therefore,
+\begin{equation}
+\sup_{e\in\mathcal E}
+\sum_{v',s}w_n(v',s)\log e(v',s)
+=I_w(S;V'),
+\end{equation}
+as required.
+\end{proof}
+
+
+
+
+\begin{theorem}
+For the same setting as Lemma \ref{lem:del0_Pc_fixed_valid_evalue}, let $\phi$ be the joint distribution over $(V,V')$ induced by $p_0$ and $P_c$, i.e.
+\begin{equation}
+\phi(v,v')=p_0(v)P_c(v'|v).
+\end{equation}
+Then
+\begin{equation}
+    J^\star=I_\phi(V;V')
+\end{equation}
+which is attained by
+\begin{equation}
+\label{eqn:optimal_coupling}
+    w^\star(s,v):=\begin{cases}
+        p_0(s)&\text{if}~s=v\\
+        0&\text{otherwise}.
+    \end{cases}
+\end{equation}
+\end{theorem}
+\begin{proof}
+Applying Lemma \ref{lem:del0_Pc_fixed_coupling_optimality} to our definition of $J^\star$, we obtain
+    \begin{equation}
+    J^\star =  \sup_{w\in\mathcal{P}(p_0,p_0)} I_\phi(S; V').
+\end{equation}
+Observe that $S-V-V'$. By the data processing inequality, $I_w(S; V')\leq I_\phi(V; V')$. Therefore, we attain the supremum over $w$ by setting $S=V$, which is exactly the coupling in Equation \ref{eqn:optimal_coupling}, with $J^\star=I_\phi(V;V')$, as required.
+
+\end{proof}
+
+\begin{remark}
+    In practice, we estimate the channel $P_c$. Depending on the codec and the estimation procedure, the estimate might not match the ground-truth. It is also possible that the ground-truth channel is time-varying or has memory. We show in the following lemma that the proposed $e^\star(v,s)$ remains anytime-valid under channels that do not match $P_c$. Improving our estimate of the channel improves the optimal growth rate.
+\end{remark}
+
+\begin{lemma}[Anytime-validity under arbitrary retokenization channels]
+
+    
+\end{lemma}
+Define the wealth process
+\begin{equation}\label{eq:wealth}
+    W_n := \sum_{i=1}^{n}\log e(v^t,s^t),
+\end{equation}
+for a valid $e$-value $e.$ We can define the stopping time $\tau_\alpha := \inf\{n \in \mathbb{Z}_{> 0}: W_n \ge \log(1/\alpha)\}.$ The stochastic process $(v^t,s^t)_{t\ge 0}$ is entirely determined by the generation process $\mathcal{G}$ which specifies a joint coupling at each token generation $w^t \in \mathcal{P}(p_0^t,q^t)$. Define the best-detection sample-complexity measure:
+\begin{equation}\label{eq:SC}
+    \text{SC}(e) := \inf_{\mathcal{G}}\lim_{\alpha\downarrow 0}\frac{\mathbb{E}_\mathcal{G}[\tau_\alpha(e)]}{\log(1/\alpha)},
+\end{equation}
+which is inherited from \cite{huang2026anytime} without the adversary. Note that the expectation of stopping times of wealth processes such as \eqref{eq:wealth} scales linearly with $\log(1/\alpha)$ and are multiplied by an information-theoretic constant which captures the complexity of the testing problem. This constant is encoded in \eqref{eq:SC}, which asks for the asymptotic rate at which we are able to detect an optimal watermarking process $\mathcal{A}$.
+\begin{conjecture}
+Let $q^t := q(\cdot\mid \mathcal{F}_{t-1})$ and $p_0^t := p_0(\cdot \mid \mathcal{F}_{t-1})$. Let $e^*$ be the likelihood ratio
+\begin{equation}\label{eq:optimal_e}
+    e^*( v'^t, s^t) := \frac{\Pr_{{w^*}^t}(S=s^t\mid V' = v'^t)}{p_0^t(s^t)}
+\end{equation}
+and the joint coupling
+\begin{equation}
+    {w^*}^t = \text{diag}(p_0^t).
+\end{equation}
+Then under this coupling, $q^t = p_0^t$, and furthermore, 
+\[\mathbb{E}[\log e^*(V_t',S_t)\mid \mathcal{F}_{t-1}] = I_{\phi_t}(V;V'),\]
+where $\phi^t = P_c \cdot p_0^t$. Assuming a law of large numbers on $I_{\phi_t}$:
+\[\frac{1}{n}\sum_{t=1}^nI_{\phi_t}(V;V') \to \overline{I},\]
+then
+\[\text{SC}(e^*) = \frac{1}{\overline{I}}.\]
+\end{conjecture}
+Intuition behind this conjecture: the channel never directly affects the generation process, therefore, since $q^0 = p^0_0$, if we begin with a coupling $w^* = \text{diag}(p_0)$, the resulting $p_0^t$ and $q^t$ must be equal as they receive the exact same token and (initially) share the same distribution. 
+
+Check chatgpt output which claims the above is optimal (this probably aligns with past results, see GRO problem in safe testing by grunwald). https://chatgpt.com/share/6ad7f3e7-7fac-83e8-9ec8-ee83a6e442fb
+
+
+
+
+\section{Practical Considerations}
+
+\subsection{Seed Synchronization}
+\label{sec:seed_sync}
+Let $S_t$ denote the $t^{th}$ seed for $t=1,...,n$. The current model assumes that $S_t$ is computed by hashing previous tokens, an assumption that will be broken with non-zero probability under retokenization mismatch. Ideas
+\begin{itemize}
+    \item Can we design/learn a feature $\phi$ derived from \textbf{audio-space} samples that is robust under retokenization and common audio processing pipelines that is use?
+    \item Use a robust statistic of the past $k$ tokens rather than directly hashing them?
+\end{itemize}
+Prior work:
+\begin{itemize}
+    \item In the previous e-value paper, \textbf{no explicit synchronization algorithm is provided.} They mereley assume that the seed can be recovered given a hash of the previous $k$ tokens.
+    \item In the SEAL paper, at generation and at detection time we have
+    \begin{align}
+        \texttt{key}_j\leftarrow\texttt{keygen}(v_{i-H:i-1}, \texttt{sk})\\
+        s_j \leftarrow \texttt{PRG}(h_j\#q_j,\texttt{key})
+    \end{align}
+    where $\texttt{sk}$ is a shared secret key.
+    \item It is likely that in practice, $\texttt{keygen}$ is implemented via a cryptographic hashing function.
+\end{itemize}
+
+\subsubsection{Audio-Space Key}
+Train a neural network to embed a chunk of the preceding audio in a latent space, using adversarial examples to ensure robustness. Let $\texttt{Enc}$ denote the encoder. Then we obtain
+\begin{equation}
+    \texttt{key}_j=\texttt{keygen}(\texttt{Enc}(t_{i-k:i-1}), \texttt{sk})
+\end{equation}
+To train the network, we would requre a loss function that encourages both diversity and robustness. Therefore, we can use
+
+
+\begin{equation}
+\mathcal{L}(\theta)
+=
+\mathbb{E}_{(X,X')}
+\left[
+\|f_\theta(X)-f_\theta(X')\|_2^2
+\right]
+-\lambda H\left(Q(f_\theta(X))\right),
+\end{equation}
+
+
+
+
+\subsubsection{An STT instantiation of the Audio-Space Key}
+Ultimately, what the proposal in the previous section requires us to realize is a function that extracts some statistic from the audio in a streaming fashion that is both \textbf{robust} and \textbf{diverse across samples}. I would argue that particularly for speach generation, one such statistic is the \textbf{actual words being spoken}. While standard processing pipelines might change individual samples due to quantization effects, compression, etc, they typically maintain the audibility of the individual words.
+
+This observation is advantageous because \textbf{there exists robust speech-to-text algorithms that we can assume both the embedder and the detector have access to.} They could both share a hash function (HMAC, similar to the implementation with SEAL) that takes as an input the past $k$ words detected by the STT algorithm as of the start of the chunk along with a shared secret key. 
+
+\paragraph{Sketch of embedding algorithm for $i^{th}$ chunk.}
+\begin{enumerate}
+    \item Embedder generates $C$ tokens using word context from chunk $i-1$ if available; if not using a dummy context.
+    \item Tokens are decoded into audio.
+    \item Run STT on the preceding audio and determine the last $k$ full spoken word(s) for the chunk.
+    \item Update word context for key generation using the past $k$ words.
+\end{enumerate}
+
+\paragraph{Sketch of streaming detection algorithm for $i^{th}$ chunk.}
+\begin{enumerate}
+    \item Run STT on preceeding audio chunks to identify past $k$ words at chunk boundary.
+    \item Set hash input accordingly.
+    \item Recover the seeds for the chunk.
+    \item Update $e$-value scores as usual.
+\end{enumerate}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/word_agreement.pdf}
+    \caption{Tentative first experiments for STT agreement. The $x$-axis means that the STT was run on $200/500$ millisecond update chunks and the $2/3$ updates means that we agree what the word was after it is consistent for that many STT runs. The STT is the $\texttt{whisper}$ model, which runs on a CPU. The TTS is the same $\texttt{Spark-TTS}$ used in previous demos.}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/sample_1050_detection_clean_timestamp_local.pdf}
+    \caption{Plot shows the agreed upon last word at each sample for noiseless generation.}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/sample_1050_detection_noise_timestamp_local.pdf}
+    \caption{Plot shows the agreed upon last word at each sample for AWGN attack.}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/sample_1050_detection_lowpass_timestamp_local.pdf}
+    \caption{Plot shows the agreed upon last word at each sample for low-pass filter attack.}
+    \label{fig:placeholder}
+\end{figure}
+
+
+\subsubsection{Sample Agreement}
+There are actually multiple synchronization problems at play. As discussed in the previous section, seed synchronization. Note that using the word agreement to synchronize the key does not necessarily mean that we agree on the sample boundaries of the tokens. For now, we assume that the frame boundary is known even if the pertinent seed is not.
+
+
+
+\subsection{Channel Estimation Algorithm}
+\label{sec:channel_estimation}
+Currently the plan is to generate many audio samples, run them through standard processing pipelines, then record original vs. recovered tokens.
+
+\paragraph{Regularization for Estimation} In the process of implementing, I noticed that channel estimation can't be done with ML estimates since that leave many transitions with $0$ probability. If those transitions are observed, the log e-value goes to $-\infty$. Therefore, we must introduce some regularization into the estimation of the channel to prevent unseen rare transitions from breaking the process.
+
+\subsection{Token Groupings for Practical Implementation}
+\label{sec:token_groupings}
+In the practical implementation of the algorithm, we need to group tokens into groups $\mathcal{G}_1,,..,\mathcal{G}_M$. Recall that $p_0$ is the model's probability distribution over tokens and $P_c$ is the observed transition matrix from the channel. Under our new noise model, this task should not be done with a random partition; rather, it should be done with the following two optimization objectives:
+\begin{enumerate}
+    \item Ensure that the total probability of observing a token in each group is approximately equal, i.e. $\Pr_{S\sim p_0}(S\in\mathcal{G}_i)\approx \frac{1}{M}$ for all $i=1,...,M$.
+    \item The mutual information of the channel is maximized (which allows for the highest growth rate). 
+\end{enumerate}
+
+\subsubsection{Formal Optimization Problem}
+Fix $M$ groups. Let $\mathcal{G}_i$ denote the set of tokens in group $i$ for $i\in [M]$. Let $g$ denote the marginal distribution over groups and $P_c^\mathcal{G}$ denote the channel induced by the grouping.
+
+
+
+\begin{align}
+    \max_{\mathcal{G}_1,\ldots,\mathcal{G}_M}
+    \quad &
+    I(G(V);G(V')) \\
+    \text{subject to} \quad
+    & \left|
+        \sum_{v\in\mathcal{G}_i}p_0(v)
+        -\frac{1}{M}
+      \right| \leq \epsilon,
+      \quad \forall i\in[M], \nonumber\\
+    & \bigcup_{i=1}^M\mathcal{G}_i=\mathcal V,
+      \nonumber\\
+    & \mathcal{G}_i\cap\mathcal{G}_j=\emptyset,
+      \quad \forall i\neq j. \nonumber
+\end{align}
+
+\begin{itemize}
+    \item Is this scheme necessary or would random token groupings suffice?
+    \item Would need to perform ablations on both to see if a ``smart'' grouping algorithm is necessary.
+\end{itemize}
+
+
+\subsubsection{Time-Varying Tokens}
+Time-varying distributions further complicates the grouping problem.
+
+\section{Algorithm Blocks}
+
+
+\begin{algorithm}[H]
+\caption{Watermark Embedding}
+
+We will need algorithm blocks or a closed-form solution for how to get $e$ and $w$ at each time step, assuming they are known for now.
+
+\label{alg:watermark_embedding}
+\begin{algorithmic}[1]
+\Require Prompt $R$, target model $p_0$, secret key $\sk$,
+    chunk size $C$, grouping function $g$,
+    context extractor $f$
+\Ensure Watermarked audio $X$
+
+\State Initialize token sequence $V\gets()$
+\State Initialize audio $X\gets()$
+\State Initialize chunk index $i\gets 1$
+
+\While{generation not complete}
+    \State $c_i\gets f(X)$
+        \Comment{Context from preceding audio}
+
+    \For{$j=1,\ldots,C$}
+        \State $p_0^{i,j}\gets p_0(\cdot\mid R,V)$
+        \State $\pi_{i,j}(a)\gets
+            \sum_{v:g(v)=a}p_0^{i,j}(v)$
+            for $a\in[M]$
+
+        \State $U_{i,j}\gets
+            \operatorname{PRF}(\sk,c_i,j)$
+        \State $A_{i,j}\gets
+            F^{-1}_{\pi_{i,j}}(U_{i,j})$
+
+        \State Sample $V_{i,j}\sim
+            p_0^{i,j}(\cdot\mid g(V)=A_{i,j})$
+        \State Append $V_{i,j}$ to $V$
+
+        \If{$V_{i,j}=\texttt{STOP}$}
+            \State \textbf{break}
+        \EndIf
+    \EndFor
+
+    \State $X\gets\operatorname{Decode}(V)$
+    \State $i\gets i+1$
+\EndWhile
+
+\State \Return $X$
+\end{algorithmic}
+\end{algorithm}
+
+
+
+\begin{algorithm}[H]
+\caption{Watermark Detection}
+\label{alg:watermark_detection}
+\begin{algorithmic}[1]
+\Require Audio $X'$, anchor model $p_0$,
+    secret key $\sk$, chunk size $C$,
+    grouping function $g$, context extractor $f$,
+    group channel $P_c^{\mathcal G}$,
+    significance level $\alpha$
+\Ensure Detection decision
+
+\State $V'\gets\operatorname{Encode}(X')$
+\State Initialize cumulative log e-value $W\gets 0$
+
+\For{each chunk $i$}
+    \State $c'_i\gets f(X'_{<i})$
+        \Comment{Recovered context}
+
+    \For{each local token index $j$ in chunk $i$}
+        \State Reconstruct anchor distribution $p_0^{i,j}$
+        \State $\pi_{i,j}(a)\gets
+            \sum_{v:g(v)=a}p_0^{i,j}(v)$
+            for $a\in[M]$
+
+        \State $S'_{i,j}\gets
+            \operatorname{PRF}(\sk,c'_i,j)$
+        \State $A'_{i,j}\gets
+            F^{-1}_{\pi_{i,j}}(S'_{i,j})$
+
+        \State $B_{i,j}\gets g(V'_{i,j})$
+
+        \State $Z_{i,j}\gets
+            \sum_{a=1}^{M}\pi_{i,j}(a)
+            P_c^{\mathcal G}(B_{i,j}\mid a)$
+
+        \State $e_{i,j}\gets
+            \frac{P_c^{\mathcal G}(B_{i,j}\mid A'_{i,j})}
+            {Z_{i,j}}$
+
+        \State $W\gets W+\log e_{i,j}$
+
+        \If{$W\geq\log(1/\alpha)$}
+            \State \Return \texttt{WATERMARKED}
+        \EndIf
+    \EndFor
+\EndFor
+
+\State \Return \texttt{NOT DETECTED}
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+
+
+\section{Experiments}
+\begin{figure}[H]
+    \centering
+    % \begin{subfigure}[b]{0.65\textwidth}
+    %     \centering
+    %     % \includegraphics[width=\textwidth]{img/gradient_latent_fit.pdf}
+    %     \includegraphics[width=\textwidth]{figures/exp1_nomodification_diagram.pdf}
+    %     \caption{Direct retokenization.}
+    %     \label{fig:exp1_nomodification_diagram}
+    % \end{subfigure}\hfill
+    \begin{subfigure}[b]{0.80\textwidth}
+        \centering
+        % \includegraphics[width=\textwidth]{img/gradient_generation.pdf}
+        \includegraphics[width=\textwidth]{figures/exp1_modification_diagram.pdf}
+        \caption{Retokenization can be preceeded by modification, either adversarial or due to standard processing pipelines.}
+        \label{fig:exp1_modification_diagram}
+    \end{subfigure}\hfill
+
+\end{figure}
+
+
+
+\subsection{Experiment 1: Re-Tokenization Mismatch}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        % \includegraphics[width=\textwidth]{img/gradient_latent_fit.pdf}
+        \includegraphics[width=\textwidth]{figures/exp1_encodec_direct.pdf}
+        \caption{Direct retokenization.}
+        \label{fig:gradient-latent-fit}
+    \end{subfigure}\hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        % \includegraphics[width=\textwidth]{img/gradient_generation.pdf}
+        \includegraphics[width=\textwidth]{figures/exp1_encodec_awgn.pdf}
+        \caption{15 dB SNR AWGN.}
+        \label{fig:gradient-generation}
+    \end{subfigure}\hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        % \includegraphics[width=\textwidth]{img/gradient_reconstruction.pdf}
+        \includegraphics[width=\textwidth]{figures/exp1_encodec_repitch.pdf}
+        \caption{Re-pitch up.}
+        \label{fig:gradient-reconstruction}
+    \end{subfigure}
+    \caption{Re-tokenization mismatch for the Encodec tokenizer. Experiment uses pre-generated audio. We generate tokens $(v_1,...,v_n)$ then pass the tokens through the decoder to obtain waveform $W$. We pass $W$ through the encoder to obtain recovered tokens $(v'_1,...,v'_n)$. The leftmost plot shows what input tokens (vertical axis) were mapped to what output tokens (horizontal axis). The center and right plots show a modified pipeline where we attack $W$ to obtain $\tilde{W}$ in audio-space, then pass $\tilde{W}$ through the encoder to obtain $(v'_1,...,v'_n)$.}
+    \label{fig:gradient-latent-scaling}
+    \begin{itemize}
+        \item ``Robustify'' experiment by: looking at audio codec benchmark and applying attacks that are standard to the audio pipeline, such as MP3 compression, sweep parameters and plot percent of correctly recovered tokens vs. attack strength and average number of tokens that each token gets mapped to vs. attack strength
+        \item Audio attack benchmark: \href{https://arxiv.org/pdf/2406.06979}{AudioMarkBench}
+    \end{itemize}
+\end{figure}
+
+\subsection{Experiment 2: Baseline Implementation of the E-WM}
+To match the experiments in the previous paper by Milis et al. \cite{milis2026hidden}, we are now using the Spark-TTS model.
+
+In the process of implementing, I noticed that channel estimation can't be done with ML estimates since that leave many transitions with $0$ probability. If those transitions are observed, the e-value goes to $-\infty$. Therefore, we must introduce some regularization into the estimation of the channel to prevent unseen rare transitions from breaking the process. For these experiments, I used a $\beta-$regularization defined as follows:
+
+\begin{equation}
+\widehat P_\beta(y\mid v)=
+\frac{N_{v,y}+\beta}{N_v+K\beta},
+\qquad N_v=\sum_y N_{v,y}.
+\end{equation}
+
+where I set $\beta=0.0001$ for these experiments. 
+
+
+
+\section{Important Links}
+\subsection{Codebases}
+\begin{itemize}
+    \item \href{https://github.com/realgourmet/e-watermark}{Baihe's Old E-WM Codebase}
+\end{itemize}
+\subsection{Papers}
+
+
+
+\section{Discussion Notes}
+\subsection{Discussion Notes for 9/9}
+\begin{itemize}
+    \item Do we want to look at diffusion models? Can we bring anytime valid detection guarentees to modalities with temporal structure, like audio, but continuous waveforms rather than discrete symbols?
+    \item Baihe's paper relies on discrete token alphabets. what if we instead designed anytime-valid guarentees for time series watermarking where we are instead looking at   ``chunks'' of continuous waveform as the primitive
+    \item Papers on autoregressive audio generation:
+    \begin{itemize}
+        \item \href{https://arxiv.org/html/2510.21115v1}{AlignedIS}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Discussion Notes for 9/16}
+\begin{itemize}
+\item First, note that in previous works on anytime-valid watermarking, there is no result about robustness. The paper addresses a gap in TV between the anchor model and target model, but does not address how attacks impact the detection rates.
+\item Motivated by the phenomenon of ``retokenization mismatch'' in neural codec models and the fact that the process of recovering initial latents, we can ask the following research question:
+\begin{itemize}
+    \item What is the optimal embedding and detection statistic for anytime-valid statistic where we only get a noisy look at embedding? 
+    \item More concretely if we generate $X_t$ but observe $Y_t\sim P(\cdot|X_t)$, what is the optimal strategy.
+    \item Conjecture that the optimal detection strategy will naturally make use of ``clusters'' of tokens that might be flipped between each other.
+\end{itemize}
+\item This noise is distinct from robustness. We mean that there is now endemic noise that must be contended with. Although this theory could be used to describe optimal strategies when you want to protect against attacks that look like random noise added to the observation.
+
+\item There is an important recent paper we should discuss, which is the group currently leading work on audio watermarking: \cite{milis2026hidden}.
+\begin{itemize}
+    \item This paper explicitely models the retokenization mismatch as a noisy channel, giving some precedent.
+\end{itemize}
+
+\item Need to think about how to modify optimization problem in theorem 4.1 in the Huang et al. original paper.
+The results in this paper stem from the following optimization problem:
+
+\item Desirerata in original paper includes: distortion-free embedding, optimal statistical rates for detection of watermarked vs non-watermarked, and model-agnostic. Does \textbf{not} seem to specifically address robustness to specific channels in optimal rates. 
+
+
+\end{itemize}
+
+\subsubsection{Concrete To-Do List}
+\begin{itemize}
+    \item Implement Baihe's algorithm without any intervention to prevent against retokenization mistmatch difficulties
+    \item Reformulate optimization problem (perhaps an Eric task or a together task)
+\end{itemize}
+
+
+\subsection{Discussion Notes 9/23}
+I ran experiments with the Hubert tokenizer and the EnCodec tokenizer to see if we see sparsity in retokenization errors, both under direct retokenization and retokenization after adversarial attacks. We will discuss these at our next meeting. 
+
+\subsection{Discussion Notes 10/7}
+\begin{itemize}
+    \item What is $\gamma$? How can we measure it? Is it a divergence between channels?
+    \item Before we even address $\gamma>0$ estimation uncertainty cases, maybe we should look into the practical impacts of seed synchronization.
+\end{itemize}
+What is $\gamma$? How can we measure it? Is it a divergence between channels?
+
+
+\subsection{Discussion Notes 10/11}
+\begin{itemize}
+    \item Work out BSC case for the model-agnostic watermark
+\end{itemize}
+
+% Choose your reference style
+\bibliographystyle{ieeetr}
+
+\section{Scratchspaces}
+\subsection{Beth}
+\subsubsection{Model Information}
+Overall class of tokenizers is referred to as Single-Stream Speech Tokenizers vs Multi-Stream Speech Tokenizers (RaonSpeech)
+\begin{itemize}
+    \item \texttt{Spark-TTS}
+    \begin{itemize}
+    \end{itemize}
+    \item \texttt{CosyVoice3}:
+\end{itemize}
+
+
+\subsection{Amy}
+Simulation of the $\delta = 0$, known-channel case (Section~\ref{sec:del0_pc_neq_I_known}).
+The vocabulary has four tokens, with anchor distribution equal to the target distribution,
+$q = p_0 = (0.40,\,0.30,\,0.20,\,0.10)$. The seed equals the generated token, $S_t = V_t$.
+The detector observes a noisy token $V_t' \sim P_c(\cdot \mid V_t)$.
+The detector uses the posterior $e^\ast$-value
+\[
+e^\ast(v', s) \;=\; \frac{\Pr(S = s \mid V' = v')}{p_0(s)} \;=\; \frac{P_c(v' \mid s)}{q_n(v')},
+\qquad q_n(v') = \sum_v p_0(v)\,P_c(v' \mid v).
+\]
+Theorem~5.3 argues that $\log e^\ast$ grows at rate $I(V;V') \approx 0.674$ nats per token.
+The detection level is $\alpha = 0.02$, so the threshold is $\log(1/\alpha) \approx 3.91$ nats.
+
+In Figures~\ref{fig:T100}--\ref{fig:T1000}, the blue curve is the cumulative log $e^\ast$-value of a watermarked curve, the orange curve is the same noisy tokens checked against independent seeds, the dashed line has slope $I = 0.674$, and the dotted line is the threshold $\log(1/\alpha)$. The red dot marks the first token at which the watermarked curve crosses the threshold.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/sec5exp_T100.png}
+  \caption{Cumulative log $e^\ast$-value, $T = 100$. The watermarked curve crosses the threshold at $t = 6$.}
+  \label{fig:T100}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/sec5exp_T200.png}
+  \caption{Cumulative log $e^\ast$-value, $T = 200$. The watermarked curve crosses the threshold at $t = 4$.}
+  \label{fig:T200}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/sec5exp_T500.png}
+  \caption{Cumulative log $e^\ast$-value, $T = 500$. The watermarked curve crosses the threshold at $t = 7$.}
+  \label{fig:T500}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/sec5exp_T1000.png}
+  \caption{Cumulative log $e^\ast$-value, $T = 1000$. The watermarked curve crosses the threshold at $t = 6$.}
+  \label{fig:T1000}
+\end{figure}
+
+
+
+Figure~\ref{fig:slopes} repeats the experiment 100 times with $T = 200$ and a different seed key each run. For each run it records the slope $\log E_T / T$, where $E_T$ is the final $e^\ast$-process value. The exact value is $I = 0.674$ nats per token. The observed mean slope is $0.665 \pm 0.005$ (standard error), within two standard errors of $I$.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/sec5exp_slopes.png}
+  \caption{Histogram of the slope (final cumulative log $e^\ast$-value divided by $T$) over 100 runs with $T = 200$.
+  The dashed black line is the exact $I = 0.674$ and the red line is the sample mean, $0.665$.}
+  \label{fig:slopes}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/sec5exp_zoom.png}
+  \caption{Cumulative log $e^\ast$-value, $T = 10$.}
+  \label{fig:zoom}
+\end{figure}
+
+
+Code: https://colab.research.google.com/drive/19ZSBsHYfifTIRx66oZBE95zFvcZSUMl0#scrollTo=sUzaBeH-XG8o
+
+\subsection{Eric}
+
+% Point to your .bib file (omit the .bib extension)
+\bibliography{references}
+\end{document}

@@ -14,7 +14,6 @@ from pathlib import Path
 import secrets
 
 import numpy as np
-import soundfile as sf
 import torch
 
 from watermark.keyed_sampling import KeyedSemanticSampler, match_statistics, replay_tokens
@@ -39,18 +38,27 @@ def read_key(path, create=False):
 
 
 def sparktts_classes():
-    # Reuse the repository's source-path setup and waveform re-encoder.
-    from evals.wm_sparktts import SparkTTS, SparkTTSTokenizerWrapper
+    # Keep this experiment independent of unrelated Moshi eval/audio packages.
+    import sys
+    source = str(Path(__file__).resolve().parents[1] / "models" / "Spark-TTS")
+    if source not in sys.path:
+        sys.path.insert(0, source)
+    from cli.SparkTTS import SparkTTS
+    from evals.sparktts_codec import SparkTTSTokenizerWrapper
     return SparkTTS, SparkTTSTokenizerWrapper
 
 
 def scores_for_observation(trace, observed, key):
     """A wrong-key comparison is a diagnostic, not a calibrated null test."""
     wrong_key = hmac.new(key, b"sparktts-wrong-key-control-v1", hashlib.sha256).digest()
-    return {
-        "same_key": match_statistics(observed, replay_tokens(trace, key)),
-        "wrong_key": match_statistics(observed, replay_tokens(trace, wrong_key)),
-    }
+    def score(candidate_key):
+        expected = replay_tokens(trace, candidate_key)
+        actual = torch.as_tensor(observed).cpu().flatten()
+        if "groups" in trace:
+            groups = trace["groups"]
+            return match_statistics(groups[actual], groups[expected])
+        return match_statistics(actual, expected)
+    return {"same_key": score(key), "wrong_key": score(wrong_key)}
 
 
 def write_json(path, value):
@@ -58,6 +66,7 @@ def write_json(path, value):
 
 
 def generate(args):
+    import soundfile as sf
     key = read_key(args.key_file, create=True)
     torch.manual_seed(args.seed)  # controls ordinary draws, not the secret stream
     SparkTTS, Tokenizer = sparktts_classes()
@@ -85,8 +94,12 @@ def generate(args):
         sample_id = secrets.token_hex(16)
         sample_dir = out / f"sample_{index:04d}_{sample_id}"
         sample_dir.mkdir()
+        groups = None
+        if args.num_groups is not None:
+            from watermark.grouped import random_groups
+            groups = random_groups(len(model.semantic_to_vocab), args.num_groups, args.partition_seed)
         sampler = KeyedSemanticSampler(model.semantic_to_vocab, key, sample_id,
-                                       args.temperature, args.top_k, args.top_p)
+                                       args.temperature, args.top_k, args.top_p, groups=groups)
         with torch.inference_mode():
             wav, original = model.inference(
                 text=text, prompt_speech_path=Path(args.prompt_audio),
@@ -98,7 +111,10 @@ def generate(args):
             raise RuntimeError("No semantic tokens generated; increase --steps or check the prompt")
         if not torch.equal(original.cpu(), trace["original_tokens"]):
             raise RuntimeError("Generated semantic IDs differ from the sampler trace")
-        if not torch.equal(replay_tokens(trace, key), original.cpu()):
+        replay = replay_tokens(trace, key)
+        replay_ok = (torch.equal(replay, original.cpu()) if groups is None else
+                     torch.equal(trace["groups"][replay], trace["groups"][original.cpu()]))
+        if not replay_ok:
             raise RuntimeError("Original keyed samples did not replay exactly")
         trace["sampling"] = {"temperature": args.temperature, "top_k": args.top_k,
                              "top_p": args.top_p, "seed": args.seed}
@@ -150,6 +166,7 @@ def detect(args):
     if args.tokens:
         observed = torch.tensor(np.loadtxt(args.tokens, dtype=np.int64, ndmin=1))
     else:
+        import soundfile as sf
         _, Tokenizer = sparktts_classes()
         tokenizer = Tokenizer(args.model_dir, torch.device(args.device))
         audio, sr = sf.read(args.audio, always_2d=True)
@@ -183,6 +200,8 @@ def main():
             sub.add_argument("--top_k", type=int, default=50)
             sub.add_argument("--top_p", type=float, default=0.95)
             sub.add_argument("--seed", type=int, default=42424242)
+            sub.add_argument("--num_groups", type=int, help="Enable candidate-token -> group -> ordinary token sampling")
+            sub.add_argument("--partition_seed", type=int, default=20261029)
             sub.add_argument("--eval_aug", action="store_true",
                              help="Enable the existing attack suite (requires its extra codecs)")
             sub.set_defaults(func=generate)

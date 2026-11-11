@@ -1,0 +1,233 @@
+Job 3487327 on gh100.hsn.cm.delta.internal.ncsa.edu; outputs: /u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327
+Thu Oct 29 22:32:58 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000039:01:00.0 Off |                    0 |
+| N/A   24C    P0             82W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_2/sample_0000_528a7bd30fd9f3d423bc7aa4ab87a687/aug_00_00.wav: same-key 116/169; wrong-key 88/169
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_2/sample_0001_e13a9d29ce768a093218ebc0e1631752/aug_00_00.wav: same-key 118/170; wrong-key 85/170
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_2/sample_0002_991af97dd4fdf8d8d653156b9f9f84d0/aug_00_00.wav: same-key 145/192; wrong-key 94/192
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_2/sample_0003_0c87f0d74963f90ba292726d2f74f02e/aug_00_00.wav: same-key 153/203; wrong-key 106/203
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_3/sample_0000_f8ccf699e1660b2fa3faeaca55fa72b9/aug_00_00.wav: same-key 112/186; wrong-key 64/186
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_3/sample_0001_f3b0ca677e9a40e6a1c2f2e7f31dbab6/aug_00_00.wav: same-key 96/161; wrong-key 57/161
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_3/sample_0002_6dc4514f4e8f214b6037ee8a3d29b69b/aug_00_00.wav: same-key 136/197; wrong-key 52/197
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_3/sample_0003_21c72e49f3d6a881e0da056453eb302e/aug_00_00.wav: same-key 125/182; wrong-key 72/182
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_4/sample_0000_84371173ce11bae880f3ddfb7287d1c3/aug_00_00.wav: same-key 109/176; wrong-key 47/176
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_4/sample_0001_ffef02b9601fae638af169fcfc477398/aug_00_00.wav: same-key 95/175; wrong-key 49/175
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_4/sample_0002_9e8e78883f4f098c24a4ccb1243b5bce/aug_00_00.wav: same-key 136/225; wrong-key 55/225
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_4/sample_0003_cd4bb86acd23db6a2ac537483198070e/aug_00_00.wav: same-key 105/175; wrong-key 56/175
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_5/sample_0000_dbf0f3ad52410a193456480578b0c6b5/aug_00_00.wav: same-key 89/182; wrong-key 33/182
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_5/sample_0001_3cff8d91e39791f86452133992a505e4/aug_00_00.wav: same-key 83/165; wrong-key 38/165
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_5/sample_0002_0849866a1ba39d8ecf847dfdf52858e1/aug_00_00.wav: same-key 106/202; wrong-key 44/202
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_5/sample_0003_f0940e14ba9d0ba3742a9c8b8ea80b29/aug_00_00.wav: same-key 100/179; wrong-key 26/179
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_6/sample_0000_b0287b086b0e3639cb0644ddd40f2b36/aug_00_00.wav: same-key 75/177; wrong-key 31/177
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_6/sample_0001_65f73da80659505b89326a360f0b2aea/aug_00_00.wav: same-key 113/196; wrong-key 30/196
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_6/sample_0002_a6d4598fbe72718151be19c1a888b82a/aug_00_00.wav: same-key 109/216; wrong-key 30/216
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_6/sample_0003_630ce2adec0d1e9e087f0eb6cbb677f7/aug_00_00.wav: same-key 95/193; wrong-key 41/193
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_7/sample_0000_89c295643272975c1b8ce16686a47644/aug_00_00.wav: same-key 80/182; wrong-key 26/182
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_7/sample_0001_238d926eb42e0c9c594b733350a31a87/aug_00_00.wav: same-key 74/166; wrong-key 33/166
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_7/sample_0002_87f82223fb688953e36f278176629f4a/aug_00_00.wav: same-key 85/205; wrong-key 30/205
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_7/sample_0003_95642a0b599fc7b829ec7f7e712ae3b8/aug_00_00.wav: same-key 88/184; wrong-key 31/184
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_8/sample_0000_5c8d30fcd4806717342d1cde812333ab/aug_00_00.wav: same-key 95/190; wrong-key 37/190
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_8/sample_0001_531191f7a15a3dbdfd3c5362326c284d/aug_00_00.wav: same-key 90/177; wrong-key 25/177
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_8/sample_0002_dd1d690d0ba112e599ce9596f3064b80/aug_00_00.wav: same-key 110/204; wrong-key 35/204
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_8/sample_0003_18eddd3796d5c2d5416628e8351e91c4/aug_00_00.wav: same-key 116/193; wrong-key 29/193
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_9/sample_0000_fb7c3ca451dbbf1caa2ff4c84169c534/aug_00_00.wav: same-key 75/187; wrong-key 28/187
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_9/sample_0001_08a61b5dee345ade856c99b7d13df888/aug_00_00.wav: same-key 90/178; wrong-key 24/178
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_9/sample_0002_17fbb7dd463fd3323793805cee59d616/aug_00_00.wav: same-key 94/220; wrong-key 29/220
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_9/sample_0003_137b70e3c5bff3e74c9dc8f15c8d2fd8/aug_00_00.wav: same-key 87/177; wrong-key 30/177
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_10/sample_0000_ae13a41cb87ac422c576ad31d002b629/aug_00_00.wav: same-key 68/176; wrong-key 26/176
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_10/sample_0001_bde7774a515b2229a9103ff08b1b213e/aug_00_00.wav: same-key 81/168; wrong-key 17/168
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_10/sample_0002_499d51ff2d0bb384797d483c10d8ae32/aug_00_00.wav: same-key 81/200; wrong-key 31/200
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_10/sample_0003_9b2a3467c5057b326a36dbcb973a055e/aug_00_00.wav: same-key 102/193; wrong-key 31/193
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_11/sample_0000_3f4a075af097fb6949f43637cf6fb9cb/aug_00_00.wav: same-key 78/185; wrong-key 18/185
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_11/sample_0001_7d24534c1d4609e0c2620ee0ea75f071/aug_00_00.wav: same-key 105/184; wrong-key 19/184
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_11/sample_0002_9a2db5ddcfae0a065f6e450487fc1a9c/aug_00_00.wav: same-key 109/213; wrong-key 22/213
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_11/sample_0003_4b7a82d4e18a67112c49aa19a194c73f/aug_00_00.wav: same-key 74/179; wrong-key 19/179
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_12/sample_0000_5fedc4bf76640d9d22a7960d7af8fe4c/aug_00_00.wav: same-key 81/177; wrong-key 18/177
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_12/sample_0001_c09df3e4ef3678f59114867f6d651c90/aug_00_00.wav: same-key 86/177; wrong-key 19/177
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_12/sample_0002_6a48a01fd2a45a07b5893a8efaa57495/aug_00_00.wav: same-key 100/202; wrong-key 16/202
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_12/sample_0003_a93b2da9e8554bb7596e8f457a045a8f/aug_00_00.wav: same-key 100/183; wrong-key 16/183
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_13/sample_0000_bf36fc0514fae89246d7f0202e04ebaf/aug_00_00.wav: same-key 64/170; wrong-key 10/170
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_13/sample_0001_4ea3e2b054cbcbf43e50bec0159e766c/aug_00_00.wav: same-key 80/169; wrong-key 20/169
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_13/sample_0002_9e6d531ee6ac656ba39333c902302913/aug_00_00.wav: same-key 79/209; wrong-key 21/209
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_13/sample_0003_4dc86b20f2db7ea274bfa09fd0417b21/aug_00_00.wav: same-key 103/187; wrong-key 17/187
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_14/sample_0000_ca923138522b96eb4f04c30a85f23bbb/aug_00_00.wav: same-key 84/174; wrong-key 18/174
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_14/sample_0001_8c0be2a1f2556994ad5c2e38f891db74/aug_00_00.wav: same-key 82/174; wrong-key 15/174
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_14/sample_0002_6f74cff9bdd1893d541ed08e187ed0f7/aug_00_00.wav: same-key 96/208; wrong-key 19/208
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_14/sample_0003_9a6e5118105830b26ebece52ee1b8ea1/aug_00_00.wav: same-key 88/175; wrong-key 14/175
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_15/sample_0000_e9d44965422a5b888fcb9a2ce91275ad/aug_00_00.wav: same-key 96/191; wrong-key 16/191
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_15/sample_0001_fe1c9d2f7d93637a1c080d131aca7f69/aug_00_00.wav: same-key 78/177; wrong-key 17/177
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_15/sample_0002_f5b1ec16aabe0a91f20a263eb6bc30f4/aug_00_00.wav: same-key 96/212; wrong-key 19/212
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_15/sample_0003_ef09e95df1e341d1afd0d20c7d6794df/aug_00_00.wav: same-key 85/197; wrong-key 11/197
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_16/sample_0000_c4f437f26f93f99f1512c8be9a506e24/aug_00_00.wav: same-key 65/174; wrong-key 13/174
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_16/sample_0001_50ab18ca4aa0abc4852faef95eb40839/aug_00_00.wav: same-key 85/188; wrong-key 17/188
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_16/sample_0002_d809720c64d7064ad232f0b3ea7a6e87/aug_00_00.wav: same-key 86/203; wrong-key 17/203
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487327/audio/partition_20261029/groups_16/sample_0003_393dd24cc858b468a59255d708fd9535/aug_00_00.wav: same-key 94/192; wrong-key 16/192
+[
+  {
+    "groups": 2,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 64.25
+  },
+  {
+    "groups": 3,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 34.0
+  },
+  {
+    "groups": 4,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 24.75
+  },
+  {
+    "groups": 5,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 38.25
+  },
+  {
+    "groups": 6,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 40.0
+  },
+  {
+    "groups": 7,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 41.25
+  },
+  {
+    "groups": 8,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 19.5
+  },
+  {
+    "groups": 9,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 32.75
+  },
+  {
+    "groups": 10,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 36.75
+  },
+  {
+    "groups": 11,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 21.25
+  },
+  {
+    "groups": 12,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 17.5
+  },
+  {
+    "groups": 13,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 34.25
+  },
+  {
+    "groups": 14,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 15.5
+  },
+  {
+    "groups": 15,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 37.75
+  },
+  {
+    "groups": 16,
+    "clips": 4,
+    "common_horizon": 160,
+    "detection_fraction": 1.0,
+    "restricted_mean_tokens": 16.0
+  }
+]

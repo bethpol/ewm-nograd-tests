@@ -1,0 +1,15 @@
+PyTorch conda environment for use with DeltaAI (CUDA 12.9)
+
+Includes: jupyter, jupyterlab, matplotlib, pandas, scipy,
+          scikit-learn, nvitop, mpi4py, tensorboard, wandb
+
+Quick start (on compute node):
+  module load python/miniforge3_pytorch/2.10.0
+  conda activate base
+  python -c "import torch; print(torch.cuda.is_available())"
+
+For Jupyter notebook support (Open OnDemand):
+  setup-kernel
+
+/sw/user/python/miniforge3-pytorch-2.10.0/lib/python3.12/site-packages/torch/nn/utils/weight_norm.py:144: FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
+  WeightNorm.apply(module, name, dim)

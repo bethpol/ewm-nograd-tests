@@ -1,0 +1,78 @@
+Job 3487318 on gh025.hsn.cm.delta.internal.ncsa.edu; outputs: /u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487318
+Thu Oct 29 22:26:57 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000019:01:00.0 Off |                    0 |
+| N/A   24C    P0             92W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Clip 1/16: 192 original, 191 recovered tokens
+Clip 2/16: 203 original, 202 recovered tokens
+Clip 3/16: 218 original, 217 recovered tokens
+Clip 4/16: 194 original, 193 recovered tokens
+Clip 5/16: 168 original, 167 recovered tokens
+Clip 6/16: 197 original, 196 recovered tokens
+Clip 7/16: 205 original, 204 recovered tokens
+Clip 8/16: 219 original, 218 recovered tokens
+Clip 9/16: 189 original, 188 recovered tokens
+Clip 10/16: 199 original, 198 recovered tokens
+Clip 11/16: 260 original, 259 recovered tokens
+Clip 12/16: 205 original, 204 recovered tokens
+Clip 13/16: 193 original, 192 recovered tokens
+Clip 14/16: 227 original, 226 recovered tokens
+Clip 15/16: 221 original, 220 recovered tokens
+Clip 16/16: 212 original, 211 recovered tokens
+{
+  "rows": "generated/original semantic token v",
+  "columns": "recovered semantic token v_prime",
+  "matrix_definition": "P[v, v_prime] = (N[v, v_prime] + beta) / (N[v] + K * beta)",
+  "matrix_file": "transition_matrix.npy",
+  "dtype": "float32",
+  "shape": [
+    8192,
+    8192
+  ],
+  "beta": 0.0001,
+  "unseen_row_policy": "uniform over the full semantic vocabulary",
+  "empirical_unseen_row_policy": "zero row; see input_token_counts.npy for support",
+  "samples_dir": "/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487318/channel_training/samples",
+  "clips": 16,
+  "paired_tokens": 3286,
+  "unique_transitions": 3135,
+  "observed_input_tokens": 2564,
+  "input_vocabulary_coverage": 0.31298828125,
+  "matching_pairs": 1414,
+  "token_recovery_rate": 0.4303104077906269,
+  "unpaired_original_tokens": 16,
+  "unpaired_recovered_tokens": 0,
+  "alignment": "same index on shared prefix, no shifting or synchronization search",
+  "channel": "direct waveform decode/re-encode, no audio attacks",
+  "scope": "empirical estimate from generated clips; not full-vocabulary calibration"
+}
+Plot: /u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487318/channel_training/transition_scatter.png
+Transition matrix: /u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487318/channel_training/transition_matrix.npy
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487318/audio/partition_20261029/groups_1/sample_0000_76fc6a2ee23efeba1e26cfb009432fe0/aug_00_00.wav: same-key 171/172; wrong-key 171/172
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487318/audio/partition_20261029/groups_1/sample_0001_d5ef952dfeda757a3def66240391517a/aug_00_00.wav: same-key 178/179; wrong-key 178/179
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487318/audio/partition_20261029/groups_1/sample_0002_1015c1b7497ba428a72b0bb7ba8f49a1/aug_00_00.wav: same-key 215/216; wrong-key 215/216
+/u/epolito/ewm-nograd-tests/outputs/grouped_pilot_3487318/audio/partition_20261029/groups_1/sample_0003_9302bf6cc84a994cf3fcf26b4fc3a23c/aug_00_00.wav: same-key 171/172; wrong-key 171/172
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+Warning: Dac library not found. Install with `pip install descript-audio-codec`.

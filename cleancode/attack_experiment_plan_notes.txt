@@ -1,0 +1,4 @@
+Both models: Spark-TTS and CosyVoice3. Counts are per model and per attack strength.
+Apply each attack to separate calibration clips, fit its channel, then test attacked watermarked clips and controls.
+Detect when maximum evidence reaches 100 (alpha=0.01). Reuse the source cohort across attacks.
+This table describes the existing queued plan: 16 conditions per model, 20 watermarked tests and 20 controls per condition.

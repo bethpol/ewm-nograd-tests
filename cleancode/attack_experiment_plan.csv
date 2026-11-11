@@ -1,0 +1,8 @@
+Plan,Clean,Noise,Low-pass,High-pass,Smoothing,Speed,Shift,Crop,MP3,EnCodec
+Strengths,None,SD: 0.001 / 0.01 / 0.05,3 kHz,1 kHz,1 ms window,1.1x,10 / 40 ms,Keep 50%,16 / 64 / 128 kbps,1.5 / 6 kbps
+Conditions per model,1,3,1,1,1,1,2,1,3,2
+Channel calibration per strength,10 clips,10 clips,10 clips,10 clips,10 clips,10 clips,10 clips,10 clips,10 clips,10 clips
+Watermarked tests per strength,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips
+Unwatermarked controls per strength,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips,20 clips
+Channel used,Fit separately for each strength,Fit separately for each strength,Fit separately for each strength,Fit separately for each strength,Fit separately for each strength,Fit separately for each strength,Fit separately for each strength,Fit separately for each strength,Fit separately for each strength,Fit separately for each strength
+Primary result,Detection rate / false-positive rate,Detection rate / false-positive rate,Detection rate / false-positive rate,Detection rate / false-positive rate,Detection rate / false-positive rate,Detection rate / false-positive rate,Detection rate / false-positive rate,Detection rate / false-positive rate,Detection rate / false-positive rate,Detection rate / false-positive rate

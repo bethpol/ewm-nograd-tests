@@ -1,0 +1,37 @@
+Channel-estimation job 3531079; output /u/epolito/ewm-nograd-tests/outputs/channel_fit_3531079
+Wed Nov  4 21:33:28 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000019:01:00.0 Off |                    0 |
+| N/A   22C    P0             85W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Missing tensor: mel_transformer.spectrogram.window
+Missing tensor: mel_transformer.mel_scale.fb
+CLIP validation 1/4; 231 tokens; 7.42s
+CLIP validation 2/4; 202 tokens; 4.78s
+CLIP validation 3/4; 212 tokens; 4.96s
+CLIP validation 4/4; 203 tokens; 4.81s
+CLIP training 1/8; 199 tokens; 4.44s
+CLIP training 2/8; 220 tokens; 4.97s
+CLIP training 3/8; 192 tokens; 4.30s
+CLIP training 4/8; 203 tokens; 4.62s
+CLIP training 5/8; 185 tokens; 4.18s
+CLIP training 6/8; 176 tokens; 4.05s
+CLIP training 7/8; 185 tokens; 4.16s
+CLIP training 8/8; 209 tokens; 4.79s
+REPORT 8 training, 4 validation; 0/84 candidates for later review
+REPORT 8 training, 4 validation; 0/84 candidates for later review

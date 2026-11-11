@@ -1,7 +1,7 @@
 """Position-keyed categorical sampling and replay for the matched (delta=0) case.
 
-This module does not bias logits or group tokens. See docs/keyed_sparktts.md
-for the probability model, trace format, and limits of this first experiment.
+Optional grouping keeps the keyed candidate token and independently samples an
+output within its group. See docs/keyed_sparktts.md and docs/grouped_watermark.md.
 """
 
 import hashlib
@@ -61,7 +61,7 @@ class KeyedSemanticSampler(LogitsProcessor):
     """
 
     def __init__(self, semantic_to_vocab, key, sample_id, temperature=1.0,
-                 top_k=50, top_p=0.95):
+                 top_k=50, top_p=0.95, groups=None):
         if not key or not sample_id:
             raise ValueError("A secret key and public sample ID are required")
         if not math.isfinite(temperature) or temperature <= 0 or top_k < 0 or not 0 < top_p <= 1:
@@ -73,6 +73,11 @@ class KeyedSemanticSampler(LogitsProcessor):
             raise ValueError("Semantic vocabulary must be nonempty with unique model IDs")
         self.semantic_ids = {int(v): i for i, v in enumerate(self.vocab_ids)}
         self.key, self.sample_id = key, sample_id
+        self.groups = None if groups is None else torch.as_tensor(groups, dtype=torch.long).cpu()
+        if self.groups is not None:
+            if (self.groups.shape != self.vocab_ids.shape or self.groups.min() < 0
+                    or sorted(self.groups.unique().tolist()) != list(range(int(self.groups.max()) + 1))):
+                raise ValueError("Groups must map every semantic token to contiguous nonnegative IDs")
         self.probabilities = []
         self.tokens = []
         self.warpers = []
@@ -98,6 +103,12 @@ class KeyedSemanticSampler(LogitsProcessor):
             p0 = p0 / p0.sum()
             position = len(self.tokens)
             semantic_id = inverse_cdf(p0, keyed_uniform(self.key, self.sample_id, position))
+            if self.groups is not None:
+                # Candidate and emitted token share the original alphabet.
+                # The keyed candidate selects a group; this independent ordinary
+                # draw preserves p0 conditional on that group.
+                within_group = p0 * (self.groups == self.groups[semantic_id])
+                semantic_id = int(torch.multinomial(within_group, 1).item())
             self.probabilities.append(p0)
             self.tokens.append(semantic_id)
             candidate = int(self.vocab_ids[semantic_id])
@@ -107,18 +118,22 @@ class KeyedSemanticSampler(LogitsProcessor):
 
     def trace(self):
         """Save distributions, not the key, uniforms, or HMAC outputs."""
-        return {
-            "format": "sparktts-keyed-categorical-v1",
+        result = {
+            "format": ("sparktts-keyed-grouped-v1" if self.groups is not None
+                       else "sparktts-keyed-categorical-v1"),
             "sample_id": self.sample_id,
             "p0": (torch.stack(self.probabilities) if self.probabilities
                    else torch.empty((0, len(self.vocab_ids)), dtype=torch.float64)),
             "original_tokens": torch.tensor(self.tokens, dtype=torch.long),
         }
+        if self.groups is not None:
+            result["groups"] = self.groups.clone()
+        return result
 
 
 def replay_tokens(trace, key):
-    """Reconstruct S_t from the key, public sample ID, index, and saved p0_t."""
-    if trace["format"] != "sparktts-keyed-categorical-v1":
+    """Reconstruct candidate S_t, not the ordinary within-group output draw."""
+    if trace["format"] not in ("sparktts-keyed-categorical-v1", "sparktts-keyed-grouped-v1"):
         raise ValueError("Unsupported keyed sampling trace format")
     return torch.tensor([
         inverse_cdf(p, keyed_uniform(key, trace["sample_id"], t))
